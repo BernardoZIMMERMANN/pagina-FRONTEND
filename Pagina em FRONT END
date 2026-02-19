@@ -1,0 +1,81 @@
+import React, { useState } from 'react';
+import './App.css';
+
+export default function App() {
+  const [newTask, setNewTask] = useState('');
+	const [pending, setPending] = useState([
+		{ id: 1, text: 'Estudar React' },
+		{ id: 2, text: 'Estudar Node' },
+	]);
+	const [completed, setCompleted] = useState([
+		{ id: 3, text: 'Estudar React Native' },
+		{ id: 4, text: 'Estudar JavaScript' },
+	]);
+
+	function addTask() {
+		const text = newTask.trim();
+		if (!text) return;
+		const task = { id: Date.now(), text };
+		setPending(prev => [task, ...prev]);
+		setNewTask('');
+	}
+
+	function markCompleted(id) {
+		setPending(prev => {
+			const task = prev.find(t => t.id === id);
+			if (!task) return prev;
+			setCompleted(prevC => [task, ...prevC]);
+			return prev.filter(t => t.id !== id);
+		});
+	}
+
+	return (
+		<div className="App">
+			<header className="cabecalho">
+				<h1 className="green-text">Aplicativo de Tarefas</h1>
+			</header>
+
+			<section className="nova-tarefa">
+				<input
+					className="blue-input"
+					value={newTask}
+					onChange={e => setNewTask(e.target.value)}
+					type="text"
+					placeholder="Digite uma nova tarefa"
+				/>
+				<button type="button" onClick={addTask}>
+					Adicionar
+				</button>
+			</section>
+
+			<section className="lista-tarefas">
+				<h2>Tarefas Pendentes</h2>
+				{pending.length === 0 ? (
+					<p>Sem tarefas pendentes.</p>
+				) : (
+					pending.map(task => (
+						<div key={task.id} className="tarefa">
+							<span className="green-text">{task.text}</span>
+							<button type="button" onClick={() => markCompleted(task.id)}>
+								Concluir
+							</button>
+						</div>
+					))
+				)}
+			</section>
+
+			<section className="lista-tarefas">
+				<h2>Tarefas Concluídas</h2>
+				{completed.length === 0 ? (
+					<p>Sem tarefas concluídas.</p>
+				) : (
+					completed.map(task => (
+						<div key={task.id} className="tarefa">
+							<span className="green-text">{task.text}</span>
+						</div>
+					))
+				)}
+			</section>
+		</div>
+	);
+}
